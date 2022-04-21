@@ -26,7 +26,7 @@ namespace WebAPITest2.Controllers
 
 
         // GET: api/Roles
-        // [Authorize(RoleEnum.Admin)]
+       // [Authorize(Role = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleDTO>>> GetRoles()
         {
