@@ -15,14 +15,14 @@ namespace WebAPITest2.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly WebAPITest2Context _context;
-        
+
         public AuthenController(IConfiguration configuration, WebAPITest2Context context)
         {
             _configuration = configuration;
             _context = context;
         }
 
-        
+
 
         private string CreateToken(User user)
         {
@@ -48,8 +48,8 @@ namespace WebAPITest2.Controllers
             Response.Cookies.Append("Access-Token", jwt, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict, Secure = true });
             return jwt;
         }
-      
 
-      
+
+
     }
 }

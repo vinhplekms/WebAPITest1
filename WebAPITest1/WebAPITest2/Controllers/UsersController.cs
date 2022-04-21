@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using WebAPITest2.Data;
+using WebAPITest2.Enums;
 using WebAPITest2.Helpers;
 using WebAPITest2.Models;
 using WebAPITest2.Services;
@@ -11,7 +12,7 @@ namespace WebAPITest2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [AuthorizeAttribute]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly WebAPITest2Context _context;
@@ -25,6 +26,7 @@ namespace WebAPITest2.Controllers
         }
 
         // GET: api/Users
+        [Authorize(RoleEnum.User)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
@@ -32,6 +34,7 @@ namespace WebAPITest2.Controllers
         }
 
         // GET: api/Users/5
+        [Authorize(RoleEnum.Admin, RoleEnum.User)]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
@@ -46,6 +49,7 @@ namespace WebAPITest2.Controllers
         }
 
         // PUT: api/Users/5
+        [Authorize(RoleEnum.Admin, RoleEnum.User)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserDTO userDTO)
         {
@@ -75,6 +79,7 @@ namespace WebAPITest2.Controllers
         }
 
         // POST: api/Users
+        [Authorize(RoleEnum.Admin, RoleEnum.User)]
         [HttpPost("{roleId}")]
         public async Task<ActionResult<UserDTO>> PostUser(int roleId, UserDTO userDTO)
         {
@@ -103,10 +108,11 @@ namespace WebAPITest2.Controllers
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-       
+
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, userToDTO(user));
         }
         // DELETE: api/Users/5
+        [Authorize(RoleEnum.Admin, RoleEnum.User)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -119,8 +125,9 @@ namespace WebAPITest2.Controllers
             return NoContent();
         }
 
+        [Authorize(RoleEnum.Admin, RoleEnum.User)]
         [HttpPost("register/{roleId}"), AllowAnonymous]
-        public async  Task<ActionResult<UserDTO>> Register(int roleId, UserDTO userDTO)
+        public async Task<ActionResult<UserDTO>> Register(int roleId, UserDTO userDTO)
         {
             if (userDTO == null)
             {
@@ -141,14 +148,12 @@ namespace WebAPITest2.Controllers
                 Fullname = userDTO.Fullname
             };
 
-             await userService.Create(user, roleId);
-
-            //cookieUtils.SetTookenCookie(authenticate.JwtToken, "Access-Token", 7, Response);
-            //cookieUtils.SetTookenCookie(authenticate.RefreshToken, "Refresh-Token", 7, Response);
+            await userService.Create(user, roleId);
 
             return Ok(userToDTO(user));
         }
 
+        [Authorize(RoleEnum.Admin, RoleEnum.User)]
         [HttpPost("login"), AllowAnonymous]
         public async Task<ActionResult> Login(UserDTOLogin request)
         {
@@ -175,7 +180,7 @@ namespace WebAPITest2.Controllers
                 System.Diagnostics.Debug.WriteLine(Encoding.UTF8.GetString(computedHash));
                 System.Diagnostics.Debug.WriteLine(Encoding.UTF8.GetString(passwordHash));
                 return computedHash.SequenceEqual(passwordHash);
-             
+
             }
         }
 
@@ -198,6 +203,6 @@ namespace WebAPITest2.Controllers
                 Fullname = user.Fullname
             };
 
-      
+
     }
 }

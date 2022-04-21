@@ -13,25 +13,32 @@ namespace WebAPITest2.Middlewares
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context, IUserService userService, IJwtUtils jwtUtils)
+        public async Task Invoke(HttpContext context, IUserService userService, IRoleService roleService, IJwtUtils jwtUtils)
         {
-            
+
             var accessToken = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last() ?? context.Request.Cookies["Access-Token"];
             var refreshToken = context.Request.Cookies["Refresh-Token"];
-            
+
             // check accessToken is expired
-           if (accessToken != null && refreshToken != null && !jwtUtils.CheckTokenExpired(accessToken))
+            if (accessToken != null && refreshToken != null && !jwtUtils.CheckTokenExpired(accessToken))
             {
-                 var tokenModel = await jwtUtils.RenewToken(new TokenModel {AccessToken = accessToken, RefreshToken = refreshToken});
-                if(tokenModel == null) accessToken = "";
-                if (tokenModel != null) accessToken = tokenModel.AccessToken;
+                var tokenModel = await jwtUtils.RenewToken(new TokenModel { AccessToken = accessToken, RefreshToken = refreshToken });
+                if (tokenModel == null)
+                {
+                    accessToken = "";
+                }
+                else
+                {
+                    if (tokenModel != null) accessToken = tokenModel.AccessToken;
+                }
             }
             var userId = jwtUtils.ValidateJwtToken(accessToken);
-            if(userId != null)
+            if (userId != null)
             {
-                context.Items["User"] = userService.FindById(userId.Value);
+                context.Items["User"] = await userService.FindById(userId.Value);
+                context.Items["Role"] = roleService.FindByUserId((int)userId);
             }
             await _next(context);
         }
-    }   
+    }
 }

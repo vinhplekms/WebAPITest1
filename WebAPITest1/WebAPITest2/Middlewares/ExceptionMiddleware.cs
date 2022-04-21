@@ -45,7 +45,7 @@ namespace WebAPITest2.Middlewares
                         response.StatusCode = (int)HttpStatusCode.NotFound;
                         msg = "NotFound";
                         break;
-                  
+
                 }
 
                 var result = new ErrorDetails()

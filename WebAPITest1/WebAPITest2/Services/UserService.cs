@@ -21,7 +21,7 @@ namespace WebAPITest2.Services
             _configuration = configuration;
         }
 
-    
+
 
         public async Task<AuthenticateResponse> Authenticate(UserDTOLogin userDTOLogin)
         {
@@ -31,14 +31,14 @@ namespace WebAPITest2.Services
                 return null;
             }
 
-            if(!VerifyAccount(userDTOLogin.Password, user.Password, user.PasswordSalt))
+            if (!VerifyAccount(userDTOLogin.Password, user.Password, user.PasswordSalt))
             {
                 return null;
             }
 
-            
+
             var tokenModel = await _jwtUtils.GenerateJwtSecutiryToken(user);
-          
+
             return new AuthenticateResponse(user, tokenModel.AccessToken, tokenModel.RefreshToken);
         }
 
@@ -69,13 +69,13 @@ namespace WebAPITest2.Services
 
         public async Task<User> FindById(int Id)
         {
-           return await _context.Users.FindAsync(Id);
+            return await _context.Users.FindAsync(Id);
         }
 
         public async Task<User> Create(User user, int roleId)
         {
             await _context.Users.AddAsync(user);
-              await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             await CreateUserRole(user.Id, roleId);
             await _context.SaveChangesAsync();

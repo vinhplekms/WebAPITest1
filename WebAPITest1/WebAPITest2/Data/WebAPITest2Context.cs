@@ -3,19 +3,19 @@
 namespace WebAPITest2.Data
 {
     public class WebAPITest2Context : DbContext
-    { 
-        public IConfiguration Configuration { get;}
+    {
+        public IConfiguration Configuration { get; }
         public WebAPITest2Context(DbContextOptions<WebAPITest2Context> options) : base(options)
         {
-                Database.Migrate();
+            Database.Migrate();
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder  optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DBConnection"));
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserRole>().HasKey(ur => new {ur.UserId, ur.RoleId});
+            modelBuilder.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
 
             modelBuilder.Entity<UserRole>()
                 .HasOne<User>(ur => ur.User)

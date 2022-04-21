@@ -14,7 +14,7 @@ namespace WebAPITest2.Services
             _context = context;
             _configuration = configuration;
         }
-        
+
         public async Task<List<RoleDTO>> FindAll()
         {
             return await _context.Roles.Select(u => roleToDTO(u)).ToListAsync();
@@ -22,17 +22,17 @@ namespace WebAPITest2.Services
 
         public async Task<Role> FindById(int Id)
         {
-           return await _context.Roles.FindAsync(Id);
+            return await _context.Roles.FindAsync(Id);
         }
 
         public async Task<Role> Create(Role role)
         {
             await _context.Roles.AddAsync(role);
-             await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return role;
         }
 
-        
+
 
         public async Task<Role> Update(int Id, RoleDTO Role)
         {
