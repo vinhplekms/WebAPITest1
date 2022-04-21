@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<WebAPITest2Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")), ServiceLifetime.Transient);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 
 //add services to DI builder
 builder.Services.AddScoped<IJwtUtils, JwtUtils>();
